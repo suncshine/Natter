@@ -886,7 +886,7 @@ class ForwardSocket(object):
         self.outbound_addr = None
         self.buff_size = 8192
         self.udp_timeout = 60
-        self.max_threads = 128
+        self.max_threads = 128*5
 
     def __del__(self):
         if self.active:
@@ -935,9 +935,12 @@ class ForwardSocket(object):
                 start_daemon_thread(self._socket_tcp_forward, args=(sock_outbound, sock_inbound))
             except (OSError, socket.error) as ex:
                 Logger.error("fwd-socket: cannot forward port: %s" % ex)
+                os._exit(1)
                 sock_inbound.close()
                 sock_outbound.close()
-                continue
+                # 尝试线程过多后重启
+                
+                # continue
 
     def _socket_tcp_forward(self, sock_to_recv, sock_to_send):
         try:
@@ -1315,6 +1318,7 @@ class NatterExitException(Exception):
 
 class NatterRetryException(Exception):
     pass
+
 
 
 def socket_set_opt(sock, reuse=False, bind_addr=None, interface=None, timeout=-1):
@@ -1836,7 +1840,7 @@ def main():
     fix_codecs()
     show_title = True
     while True:
-        try:
+        try:         
             natter_main(show_title)
         except NatterRetryException:
             pass
