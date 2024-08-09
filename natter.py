@@ -935,11 +935,14 @@ class ForwardSocket(object):
                 start_daemon_thread(self._socket_tcp_forward, args=(sock_outbound, sock_inbound))
             except (OSError, socket.error) as ex:
                 Logger.error("fwd-socket: cannot forward port: %s" % ex)
-                os._exit(1)
+                # 尝试线程过多后重启
+                # os._exit(1)
+                keep_alive.reset()
+                need_recheck = True
+                # 
                 sock_inbound.close()
                 sock_outbound.close()
                 # 尝试线程过多后重启
-                
                 # continue
 
     def _socket_tcp_forward(self, sock_to_recv, sock_to_send):
