@@ -68,6 +68,10 @@ class CloudFlareRedir:
                 ret = json.load(res)
         except urllib.error.HTTPError as e:
             ret = json.load(e)
+        except urllib.error.URLError as e:
+            ret = json.load(e)
+        except Exception as e:
+            ret = json.load(e)
         if "errors" not in ret:
             raise RuntimeError(ret)
         if not ret.get("success"):
