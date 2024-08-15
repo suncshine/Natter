@@ -936,9 +936,9 @@ class ForwardSocket(object):
             except (OSError, socket.error) as ex:
                 Logger.error("fwd-socket: cannot forward port: %s" % ex)
                 # 尝试线程过多后重启
-                # os._exit(1)
-                keep_alive.reset()
-                need_recheck = True
+                os._exit(1)
+                # keep_alive.reset()
+                # need_recheck = True
                 # 
                 sock_inbound.close()
                 sock_outbound.close()
