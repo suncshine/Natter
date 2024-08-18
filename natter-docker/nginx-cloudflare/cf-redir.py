@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import urllib.request
 import json
-import sys
+import sys,os
 
 # Natter notification script arguments
 protocol, private_ip, private_port, public_ip, public_port = sys.argv[1:6]
@@ -67,6 +67,8 @@ class CloudFlareRedir:
             with self.opener.open(req, timeout=10) as res:
                 ret = json.load(res)
         except urllib.error.HTTPError as e:
+            # 请求超时
+            os._exit(1)
             ret = json.load(e)
         if "errors" not in ret:
             raise RuntimeError(ret)
